@@ -43,7 +43,7 @@ class AppointmentServiceImplTest {
 	@MockBean
 	private AppointmentRepository appointmentRepo;
 
-	
+	private  List<Appointment> listOfAppointments = new ArrayList<>();
 	private  List<Appointment> listOfAppointment = new ArrayList<>();
 	Appointment appointment= new Appointment(37,7,7,"22-01-2022","10:47 pm","");
 	Appointment appointments= new Appointment(37,7,7,"22-01-2022","10:47 pm","",0);
@@ -54,11 +54,11 @@ class AppointmentServiceImplTest {
 	public void findAppointmentByIdSuccess()
 			throws AppointmentException {
 		
-		AppointmentRequestUserId request = new AppointmentRequestUserId(4);
+		AppointmentRequestUserId request = new AppointmentRequestUserId(7);
 		listOfAppointment.add(appointments);
 		
 		
-		Mockito.when(appointmentRepo.findAllByUserId(request.getRequestedUserId())).thenReturn(listOfAppointment);
+		System.out.println(Mockito.when(appointmentRepo.findAllByUserId(request.getRequestedUserId())).thenReturn(listOfAppointment));
 		
 		assertEquals(service.appointmentFindByUserIdProcess(request.getRequestedUserId()), listOfAppointment);
 	}
@@ -80,7 +80,7 @@ class AppointmentServiceImplTest {
 	}
 	
 	@Test
-	void bookAppointment() throws AppointmentException {
+	public void bookAppointment() throws AppointmentException {
 		
 		Appointment request;
 		
@@ -94,7 +94,7 @@ class AppointmentServiceImplTest {
 	}
 	
 	@Test
-	void updateAppointment() throws AppointmentException {
+	public void updateAppointment() throws AppointmentException {
 		
 		AppointmentUpdateRequest request;
 		
@@ -108,7 +108,7 @@ class AppointmentServiceImplTest {
 	}
 	
 	@Test
-	void deleteAppointment() throws AppointmentException {
+	public void deleteAppointment() throws AppointmentException {
 		
 		AppointmentRequestUserId request;
 		
@@ -121,4 +121,75 @@ class AppointmentServiceImplTest {
 		Assert.assertEquals(service.appointmentDeleteProcess(request),true);
 	}
 
+	@Test
+	public void bookAppointmentFailure() throws AppointmentException {
+		
+		Appointment request;
+		
+		
+		request = new Appointment(40,1,7,"22-02-2022","10:47 pm","");
+		
+		
+		Mockito.when(appointmentRepo.insertAppointment(request.getCreatorId(), request.getDate(), request.getTime(), request.getDescription(), request.getUserId())).thenReturn(1);
+		
+		assertEquals(service.appointmentBookProcess(request),false);
+	}
+	
+	@Test
+	public void updateAppointmentFailure() throws AppointmentException {
+		
+		AppointmentUpdateRequest request;
+		
+		
+		request = new AppointmentUpdateRequest(40,7,7,"22-03-2022","11:47 pm","");
+		
+		
+		Mockito.when(appointmentRepo.updateAppointment(request.getRequestedAppointmentId(),request.getRequestedUserId(),request.getRequestedcreatorId(), request.getRequestedDate(), request.getRequestedTime(), request.getRequestedDescription())).thenReturn(0);
+		
+		Assert.assertEquals(service.appointmentUpdateProcess(request),false);
+	}
+
+	@Test
+	public void deleteAppointmentFailure() throws AppointmentException {
+		
+		AppointmentRequestUserId request;
+		
+		
+		request = new AppointmentRequestUserId(8,40);
+		
+		
+		Mockito.when(appointmentRepo.deleteByUserId(request.getRequestedUserId(),request.getRequestedAppointedId())).thenReturn(0);
+		
+		Assert.assertEquals(service.appointmentDeleteProcess(request),false);
+	}
+	
+	@Test
+	public void findAppointmentByIdFailure()
+			throws AppointmentException {
+		
+		AppointmentRequestUserId request = new AppointmentRequestUserId(8);
+		listOfAppointment.add(appointments);
+		
+		
+		Mockito.when(appointmentRepo.findAllByUserId(request.getRequestedUserId())).thenReturn(listOfAppointment);
+		
+		Assert.assertEquals(service.appointmentFindByUserIdProcess(request.getRequestedUserId()), listOfAppointment);
+	}
+	
+	@Test
+	public void findAppointmentByDateTimeFailure() throws AppointmentException {
+		
+		AppointmentRequest request;
+		
+		request = new AppointmentRequest("02-02-2022","10:47 pm");
+		
+		
+		
+		listOfAppointment.add(appointments);
+		
+		Mockito.when(appointmentRepo.findAllByDateAndTime(request.getRequestedDate(),request.getRequestedTime())).thenReturn(listOfAppointment);
+		
+		assertEquals(service.appointmentFindByDateAndTimeProcess(request), listOfAppointment);
+	}
+	
 }

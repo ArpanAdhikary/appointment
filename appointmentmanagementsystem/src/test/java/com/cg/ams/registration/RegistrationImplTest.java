@@ -34,8 +34,8 @@ public class RegistrationImplTest {
 	UserRegistration userRegistration=new UserRegistration(7,"Arpan13@","Arpanq","8296758379",
 			"arpanadhikary123@gmail.com","User","Qwerty123@");
 
-	UserRegistration userRegistrations=new UserRegistration(8,"Arpan13@","Arpanq","8296758379",
-			"arpanadhikary123@gmail.com","User","Qwerty123@");
+	UserRegistration userRegistrations=new UserRegistration(1,"Arpan137@","Arpanq","8296658379",
+			"arpanadhiary123@gmail.com","User","Qwerty123@");
 
 	
 	@Test
@@ -54,12 +54,15 @@ public class RegistrationImplTest {
 		Assert.assertEquals(service.userRegistrationProcess(userRegistration),true);
 		
 	}
+	
 	@Test
-	public void failedUnRegisterTest() throws UserRegistrationFailedException{
+	public void registerTestFailure() throws UserRegistrationFailedException{
 		
-		Mockito.when(registrationRepo.deleteUsers(userRegistration.getId())).thenReturn(0);
+		Mockito.when(registrationRepo.insertUsers(userRegistration.getEmailId(),userRegistration.getMobileNo(),userRegistration.getName(),userRegistration.getUsername(),userRegistration.getRole(),userRegistration.getPassword())).thenReturn(1);
 		
-		Assert.assertEquals(service.userRegistrationProcess(userRegistrations),false);
+		Assert.assertEquals(service.userRegistrationProcess(userRegistration),false);
 		
 	}
+	
+	
 }
